@@ -6,7 +6,6 @@ const server = express()
 
 server.use(express.json())
 
-server.use('/api/cars', carsRouter)
 
 server.use('*', (req, res) => {
     res.status(404).json({
@@ -14,5 +13,10 @@ server.use('*', (req, res) => {
     })
 })
 
+server.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+        message: err.message
+    })
+})
 
 module.exports = server
