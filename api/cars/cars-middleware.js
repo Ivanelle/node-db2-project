@@ -1,6 +1,6 @@
 const Car = require('../cars/cars-model')
 const db = require('../../data/db-config')
-
+const vinValidator = require('vin-validator')
 
 
 exports.checkCarId = async (req, res, next) => {
@@ -20,25 +20,40 @@ exports.checkCarId = async (req, res, next) => {
 }
 
 exports.checkCarPayload = async (req, res, next) => {
-  const { vin, make, model, mileage } = req.body
-
-  if(
-      !vin || vin === undefined ||
-      !make || make === undefined ||
-      !model || model === undefined ||
-      !mileage || mileage === undefined
-    ) {
-
-    res.status(404).json({
-      message: 'Vin, make, model, or mileage is missing'
-    })
-
-  } else {
-    next()
-  }
+  if(!req.body.vin) return next({
+    status: 400,
+    message: 'vin is missing'
+  })
+  if(!req.body.make) return next({
+    status: 400,
+    message: 'make is missing'
+  })
+  if(!req.body.model) return next({
+    status: 400,
+    message: 'model is missing'
+  })
+  if(!req.body.mileage) return next({
+    status: 400,
+    message: 'mileage is missing'
+  }) 
+  next()
 }
 
 exports.checkVinNumberValid = async (req, res, next) => {
+  const { vin } = req.body
+  try {
+    const validatedVin = vinValidator.validate(vin)
+    if (validatedVin) {
+      next()
+    } else {
+      res.status(400).json({
+        message: `vin ${vin} is invalid`
+      })
+    }
+  } catch(err) {
+    next(err)
+  }
+ 
 
 }
 
