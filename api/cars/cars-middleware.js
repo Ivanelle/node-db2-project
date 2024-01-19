@@ -5,10 +5,10 @@ const db = require('../../data/db-config')
 
 exports.checkCarId = async (req, res, next) => {
   try {
-    const car = Car.getById(req.params.id)
+    const car = await Car.getById(req.params.id)
     if(!car) {
       res.status(404).json({
-        message: `car with id ${car} is not found`
+          message: `car with id ${car} is not found`
       })
     } else {
       req.car = car

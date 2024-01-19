@@ -15,7 +15,12 @@ router.get('/', (req, res) => {
     })
 })
 router.get('/:id', md.checkCarId, async (req, res, next) => {
-    res.json(`getting car with id ${req.params.id}`)
+    try {
+        const carId = await Car.getById(req.params.id)
+        res.json(carId)
+    } catch (err) {
+        next(err)
+    }
 })
 router.post('/:id', async (req, res, next) => {
     res.json('posting new car')
