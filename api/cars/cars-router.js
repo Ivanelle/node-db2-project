@@ -14,16 +14,39 @@ router.get('/', (req, res) => {
         })
     })
 })
+
 router.get('/:id', md.checkCarId, async (req, res, next) => {
     try {
         const carId = await Car.getById(req.params.id)
         res.json(carId)
+
     } catch (err) {
+
         next(err)
     }
 })
-router.post('/:id', async (req, res, next) => {
-    res.json('posting new car')
+
+router.post('/', 
+    md.checkCarPayload, 
+    md.checkVinNumberUnique,
+    async (req, res, next) => {
+        try {
+            const newCarPosted = await Car.create({
+                vin: req.body.vin,
+                make: req.body.make,
+                model: req.body.model,
+                mileage: req.body.mileage,
+                title: req.body.title,
+                transmission: req.body.transmission
+            })
+            res.status(201).json(newCarPosted)
+
+        } catch (err){
+            res.status(400).json({
+                message: err.message
+            })
+        }
+        next()
 })
 
 
