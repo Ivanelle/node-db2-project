@@ -19,12 +19,10 @@ const cars = [
         make: 'ford',
         model: 'focus',
         mileage: 15000,
-    }
+    },
 ]
 
-exports.seed = function (knex) {
-    return knex('cars').insert(cars)
-        .truncate().then(() => {
-            return knex(cars).insert(cars)
-        })
+exports.seed = async function (knex) {
+    await knex('cars').truncate()
+    await knex('cars').insert(cars)
 }
